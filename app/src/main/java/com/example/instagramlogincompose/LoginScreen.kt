@@ -1,6 +1,7 @@
 package com.example.instagramlogincompose
 
 import android.app.Activity
+import android.util.Patterns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -111,9 +113,15 @@ fun Body(modifier: Modifier) {
                 .size(200.dp, 100.dp)
         )
         Spacer(modifier = Modifier.size(16.dp))
-        Email(email) { email = it }
+        Email(email) {
+            email = it
+            isLoginEnable = enableLogin(email, password)
+        }
         Spacer(modifier = Modifier.size(4.dp))
-        Password(password = password) { password = it }
+        Password(password = password) {
+            password = it
+            isLoginEnable = enableLogin(email, password)
+        }
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword()
         Spacer(modifier = Modifier.size(16.dp))
@@ -173,10 +181,24 @@ fun LoginDivider() {
 
 @Composable
 fun LoginButton(loginEnable: Boolean) {
-    Button(onClick = { }, enabled = loginEnable, modifier = Modifier.fillMaxWidth()) {
+    Button(
+        onClick = { },
+        enabled = loginEnable,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFF4EA8E9),
+            disabledContainerColor = Color(0xFF78C8F9),
+            contentColor = Color.White,
+            disabledContentColor = Color.White
+        )
+    ) {
         Text(text = "Log In")
     }
 }
+
+fun enableLogin(email: String, password: String): Boolean =
+    Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length > 6
+
 
 @Composable
 fun ForgotPassword() {
@@ -235,7 +257,7 @@ fun Password(password: String, onTextChanged: (String) -> Unit) {
                 Icon(imageVector = image, contentDescription = "show password")
             }
         },
-        visualTransformation = if(passwordVisibility) {
+        visualTransformation = if (passwordVisibility) {
             VisualTransformation.None
         } else {
             PasswordVisualTransformation()
